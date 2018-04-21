@@ -47,8 +47,9 @@ if g==1
         %figure('units','normalized','outerposition',[0 0 1 1]);
         subplot(2,1,1);
         plot(emg(:,c));
+        title('EMG Signal','FontSize',16);
         %scatter(Xs,emg(:,c));
-        title('Original EMG Signal','FontSize',16)
+        
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
 
@@ -60,6 +61,7 @@ if g==1
         
         subplot(2,1,2);
         plot(variances(:,c));
+        title('Signal Variance','FontSize',16);
         hold on;
         plot(xlim, [thresholdVar(c) thresholdVar(c)], '-g')
         plot(xlim, [highVar(c) highVar(c)], '-k')
