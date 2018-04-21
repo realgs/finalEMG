@@ -42,9 +42,8 @@ end
 %data visualization
 if g==1
     for c=1:6
-        figure();
+        figure('units','normalized','outerposition',[0 0 1 1]);
         set(gcf,'color','w');
-        %figure('units','normalized','outerposition',[0 0 1 1]);
         subplot(2,1,1);
         plot(emg(:,c));
         title('EMG Signal','FontSize',16);
