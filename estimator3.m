@@ -7,7 +7,6 @@ end
 
 emg(1:6,13) = 0;
 variances = zeros(length(emg),6);
-Xs = [1:length(emg)];
 flag(1:6) = 0;
 result(1:6) = 5000;
 
@@ -47,6 +46,8 @@ if g==1
         subplot(2,1,1);
         plot(emg(:,c));
         title('EMG Signal','FontSize',16);
+        %for scatter:
+        %Xs = [1:length(emg)];
         %scatter(Xs,emg(:,c));
         
         xlabel('t = [ms]')
