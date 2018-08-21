@@ -9,7 +9,7 @@ y = zeros(size(in,1),2); % TEST
 %y = zeros(length(signals),2); % ready for vectorization 
 
 %signals - data source - table of 6x5000 signals
-load('Alicante.mat');
+load('database.mat');
 
 % emg1 = B01fsbrzuch1;
 % emg1(1,9) = 0;

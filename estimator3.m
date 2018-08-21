@@ -1,6 +1,6 @@
 function [ result ] = estimator3( emg, w, h, g)
-%A muscle activity estimator based on the difference between maximal and
-%initial variance
+%A muscle activity estimator based on a mathematical model of a signal (1st phase) and
+%the precise detection (2nd phase) based on signal sign changes.
 if nargin<4
     g=0;
 end
@@ -10,7 +10,7 @@ variances = zeros(length(emg),6);
 flag(1:6) = 0;
 result(1:6) = 5000;
 
-%calculating a half of the window size - rounding to the nearest even value
+%halving the window size - rounding to the nearest even value
 w2 = round(w/2);
 
 %data processing
@@ -37,12 +37,21 @@ for c = 1:6
         end
     end
 end
-
+%calculate sign changes around beginnings
+for c = 1:6
+    for n = emg(c,13) - 250 : emg(c,13) + 250
+        currentVar = variances(n,c);
+        if currentVar > thresholdVar(c) && flag(c) == 0 
+           result(c) = emg(c,13) - emg(c,8);
+           flag(c) = 1;
+        end
+    end
+end
 %data visualization
 if g==1
     for c=1:6
         figure('units','normalized','outerposition',[0 0 1 1]);
-        set(gcf,'color','w');
+        %set(gcf,'color','w');
         subplot(2,1,1);
         plot(emg(:,c));
         title('EMG Signal','FontSize',16);
