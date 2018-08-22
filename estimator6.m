@@ -1,28 +1,28 @@
-function [ result ] = estimator5( emg, h, duration, numOfAllActive, poolSize, g)
-%A muscle activity estimator based on Bonato et al. algorithm
+function [ result ] = estimator6( emg, w, h, duration, poolSize, g)
+%A muscle activity estimator based on Lidierth algorithm
 
 if nargin<6
     g=0;
 end
 
-w = 100;
-
-emg(1:6,15) = 0;
+emg(1:6,16) = 0;
 flag(1:6) = 0;
 result(1:6) = 5000;
 
 %data processing
-initialVar(1:6) = var(emg(1:w, 1:6));
+initialMean(1:6) = mean(abs(emg(1:w, 1:6)));
+initialStd(1:6) = std(emg(1:w, 1:6));
 
 %evaluation stage
 for c = 1:6
-    for n = 3 : 2 : length(emg) - poolSize
+    for n = w + 1 : length(emg) - poolSize
         countAll = 0;
         countSubsequent = 0;
         isSubsequent = 1;
+        currentMean = mean(abs(emg(n-w+1:n, c)));
+        currentFVal = currentMean - initialMean(c);
         for m = n : n + poolSize - 1
-            currentFVal = (emg(m-1, c)^2 + emg(m, c)^2) / initialVar(c);
-            if currentFVal > h
+            if currentFVal > h * initialStd(c)^2
                 if isSubsequent == 1
                     countSubsequent = countSubsequent + 1;
                 end
@@ -31,11 +31,11 @@ for c = 1:6
                 isSubsequent = 0;
             end
         end
-            
-        if flag(c) == 0 &&  countSubsequent >= duration && countAll >= numOfAllActive
-           emg(c,15) = n;
-           result(c) = emg(c,15) - emg(c,8);
-           flag(c) = 1;
+        
+        if flag(c) == 0 &&  countSubsequent >= duration && countAll >= 1
+            emg(c,16) = n;
+            result(c) = emg(c,16) - emg(c,8);
+            flag(c) = 1;
         end
     end
 end
@@ -53,10 +53,10 @@ if g==1
         
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
-
+        
         hold on;
         plot(xlim, [0 0], '-k');
-        plot(emg(c,15),0,'r.','MarkerSize',25);
+        plot(emg(c,16),0,'r.','MarkerSize',25);
         plot(emg(c,8),0,'g.','MarkerSize',25);
         hold off;
     end

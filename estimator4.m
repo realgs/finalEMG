@@ -16,7 +16,7 @@ initialStd(1:6) = std(emg(1:w, 1:6));
 %evaluation stage
 for c = 1:6
     for n = w + 1 : length(emg)
-        currentMean = mean(abs(emg(n-w:n, c)));
+        currentMean = mean(abs(emg(n-w+1:n, c)));
         currentFVal = currentMean - initialMean(c);
         if flag(c) == 0 && currentFVal > h * initialStd(c)^2
            emg(c,14) = n;
