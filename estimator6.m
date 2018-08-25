@@ -22,7 +22,7 @@ for c = 1:6
         currentMean = mean(abs(emg(n-w+1:n, c)));
         currentFVal = currentMean - initialMean(c);
         for m = n : n + poolSize - 1
-            if currentFVal > h * initialStd(c)^2
+            if currentFVal > h * initialStd(c)
                 if isSubsequent == 1
                     countSubsequent = countSubsequent + 1;
                 end
