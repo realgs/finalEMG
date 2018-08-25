@@ -20,7 +20,7 @@ for c = 1:6
         countAll = 0;
         countSubsequent = 0;
         isSubsequent = 1;
-        for m = n : n + poolSize - 1
+        for m = n : n + poolSize
             currentFVal = (emg(m-1, c)^2 + emg(m, c)^2) / initialVar(c);
             if currentFVal > h
                 if isSubsequent == 1
