@@ -15,14 +15,14 @@ initialStd(1:6) = std(emg(1:w, 1:6));
 
 %evaluation stage
 for c = 1:6
-    for n = w + 1 : length(emg) - poolSize
+    for n = w : length(emg) - poolSize
         countAll = 0;
         countSubsequent = 0;
         isSubsequent = 1;
-        currentMean = mean(abs(emg(n-w+1:n, c)));
-        currentFVal = currentMean - initialMean(c);
-        for m = n : n + poolSize - 1
-            if currentFVal > h * initialStd(c)
+        for m = n : n + poolSize
+            currentMean = mean(abs(emg(m-w+1:m, c)));
+            currentFVal = (currentMean - initialMean(c)) / initialStd(c);
+            if currentFVal > h
                 if isSubsequent == 1
                     countSubsequent = countSubsequent + 1;
                 end
@@ -34,7 +34,7 @@ for c = 1:6
         
         if flag(c) == 0 &&  countSubsequent >= duration && countAll >= 1
             emg(c,16) = n;
-            result(c) = emg(c,16) - emg(c,8);
+            result(c) = emg(c,16);% - emg(c,8);
             flag(c) = 1;
         end
     end
