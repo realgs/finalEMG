@@ -34,7 +34,7 @@ for c = 1:6
         
         if flag(c) == 0 &&  countSubsequent >= duration && countAll >= 1
             emg(c,16) = n;
-            result(c) = emg(c,16);% - emg(c,8);
+            result(c) = emg(c,16) - emg(c,8);
             flag(c) = 1;
         end
     end
