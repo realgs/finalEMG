@@ -9,16 +9,21 @@ emg(1:6,18) = 0;
 flag(1:6) = 0;
 result(1:6) = 5000;
 
+if w2 < w1
+    beginning = w1;
+else
+    beginning = w2;
+end
 
 %evaluation stage
 for c = 1:6
-    for n = w1 : length(emg)
-        currentFval = mean(abs(emg(n-w1 : n, c)));
-        currentAdaptiveThreshold = mean(abs(emg(n-w2 : n, c)));
-        if flag(c) == 0 && currentFval >= currentAdaptiveThreshold && currentFval >= h
+    for n = beginning : length(emg)
+        currentFval = mean(abs(emg(n-w1+1 : n, c)));
+        currentAdaptiveThreshold = mean(abs(emg(n-w2+1 : n, c)));
+        if currentFval >= currentAdaptiveThreshold && currentFval >= h
             emg(c,18) = n;
             result(c) = emg(c,18) - emg(c,8);
-            flag(c) = 1;
+            break
         end
     end
 end
@@ -38,11 +43,11 @@ if g==1
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
 
-%         hold on;
-%         plot(xlim, [0 0], '-k')
-%         plot(emg(c,18),0,'r.','MarkerSize',25);
-%         plot(emg(c,8),0,'g.','MarkerSize',25);
-%         hold off;
+        hold on;
+        plot(xlim, [0 0], '-k')
+        plot(emg(c,18),0,'r.','MarkerSize',25);
+        plot(emg(c,8),0,'g.','MarkerSize',25);
+        hold off;
 %         
 %         subplot(2,1,2);
 %         plot(energyLevels(:,c));
