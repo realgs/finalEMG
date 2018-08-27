@@ -1,21 +1,21 @@
-function [ result ] = estimator7( emg, h, duration, g)
-%A muscle activity estimator based on Solnik et al. algorithm (TKOperator)
+function [ result ] = estimator9( emg, w, h, duration, g)
+%A muscle activity estimator based on Londral et al. algorithm (2013)
 
-if nargin<4
+if nargin<5
     g=0;
 end
 
-emg(1:6,17) = 0;
+emg(1:6,19) = 0;
 flag(1:6) = 0;
 result(1:6) = 5000;
 
 %data processing
-initialMean(1:6) = mean(abs(emg(1:100, 1:6)));
-initialStd(1:6) = std(emg(1:100, 1:6));
+initialMean(1:6) = mean(abs(emg(1:w, 1:6)));
+initialStd(1:6) = std(emg(1:w, 1:6));
 
 %evaluation stage
 for c = 1:6
-    for n = 2 : length(emg) - duration
+    for n = w : length(emg)
         countSubsequent = 0;
         for m = n : n + duration - 1
             currentEnergy = abs(emg(m, c)^2 - emg(m-1, c) * emg(m+1, c));
@@ -27,8 +27,8 @@ for c = 1:6
         end
         
         if flag(c) == 0 && countSubsequent >= duration
-            emg(c,17) = n;
-            result(c) = emg(c,17) - emg(c,8);
+            emg(c,19) = n;
+            result(c) = emg(c,19) - emg(c,8);
             flag(c) = 1;
         end
     end
@@ -51,7 +51,7 @@ if g==1
 
 %         hold on;
 %         plot(xlim, [0 0], '-k')
-%         plot(emg(c,17),0,'r.','MarkerSize',25);
+%         plot(emg(c,19),0,'r.','MarkerSize',25);
 %         plot(emg(c,8),0,'g.','MarkerSize',25);
 %         hold off;
 %         
