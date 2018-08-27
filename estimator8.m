@@ -13,17 +13,9 @@ result(1:6) = 5000;
 %evaluation stage
 for c = 1:6
     for n = w1 : length(emg)
-    
-        for m = n- : n
-            currentEnergy = abs(emg(m, c)^2 - emg(m-1, c) * emg(m+1, c));
-            if currentEnergy > initialMean(c) + h * initialStd(c) 
-                countSubsequent = countSubsequent + 1;
-            else
-                break
-            end
-        end
-        
-        if flag(c) == 0 && countSubsequent >= duration
+        currentFval = mean(abs(emg(n-w1 : n, c)));
+        currentAdaptiveThreshold = mean(abs(emg(n-w2 : n, c)));
+        if flag(c) == 0 && currentFval >= currentAdaptiveThreshold && currentFval >= h
             emg(c,18) = n;
             result(c) = emg(c,18) - emg(c,8);
             flag(c) = 1;

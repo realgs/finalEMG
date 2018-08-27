@@ -12,17 +12,8 @@ result(1:6) = 5000;
 
 %evaluation stage
 for c = 1:6
-    for n = w : length(emg)
-        energyLevels(n, c) = abs(emg(n, c)^2 - emg(n-1, c) * emg(n+1, c));
-        countSubsequent = 0;
-        for m = n : n + duration - 1
-            currentEnergy = abs(emg(m, c)^2 - emg(m-1, c) * emg(m+1, c));
-            if currentEnergy > initialMean(c) + h * initialStd(c) 
-                countSubsequent = countSubsequent + 1;
-            else
-                break
-            end
-        end
+    for n = w1 : length(emg)
+        currentFval = mean(abs(emg(n-w1 : n, c)));
         
         if flag(c) == 0 && countSubsequent >= duration
             emg(c,18) = n;
@@ -47,18 +38,18 @@ if g==1
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
 
-        hold on;
-        plot(xlim, [0 0], '-k')
-        plot(emg(c,18),0,'r.','MarkerSize',25);
-        plot(emg(c,8),0,'g.','MarkerSize',25);
-        hold off;
-        
-        subplot(2,1,2);
-        plot(energyLevels(:,c));
-        title('Signal Variance','FontSize',16);
-        hold on;
-        plot(xlim, [(initialMean(c) + h * initialStd(c)) (initialMean(c) + h * initialStd(c))], '-g')
-        hold off;
+%         hold on;
+%         plot(xlim, [0 0], '-k')
+%         plot(emg(c,18),0,'r.','MarkerSize',25);
+%         plot(emg(c,8),0,'g.','MarkerSize',25);
+%         hold off;
+%         
+%         subplot(2,1,2);
+%         plot(energyLevels(:,c));
+%         title('Signal Variance','FontSize',16);
+%         hold on;
+%         plot(xlim, [(initialMean(c) + h * initialStd(c)) (initialMean(c) + h * initialStd(c))], '-g')
+%         hold off;
     end
 end
 
