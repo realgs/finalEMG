@@ -18,14 +18,12 @@ for c = 1:6
     for n = w : length(emg)
         countSubsequent = 0;
         for m = n : n + duration - 1
-            currentEnergy = abs(emg(m, c)^2 - emg(m-1, c) * emg(m+1, c));
-            if currentEnergy > initialMean(c) + h * initialStd(c) 
+            if currentFval > initialMean(c) + h * initialStd(c) 
                 countSubsequent = countSubsequent + 1;
             else
                 break
             end
-        end
-        
+        end     
         if flag(c) == 0 && countSubsequent >= duration
             emg(c,19) = n;
             result(c) = emg(c,19) - emg(c,8);
