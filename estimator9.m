@@ -37,7 +37,6 @@ if g==1
     for c=1:6
         figure('units','normalized','outerposition',[0 0 1 1]);
         %set(gcf,'color','w');
-        subplot(2,1,1);
         plot(emg(:,c));
         title('EMG Signal','FontSize',16);
         %for scatter:
@@ -46,19 +45,12 @@ if g==1
         
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
-
-%         hold on;
-%         plot(xlim, [0 0], '-k')
-%         plot(emg(c,19),0,'r.','MarkerSize',25);
-%         plot(emg(c,8),0,'g.','MarkerSize',25);
-%         hold off;
-%         
-%         subplot(2,1,2);
-%         plot(energyLevels(:,c));
-%         title('Signal Variance','FontSize',16);
-%         hold on;
-%         plot(xlim, [(initialMean(c) + h * initialStd(c)) (initialMean(c) + h * initialStd(c))], '-g')
-%         hold off;
+        
+        hold on;
+        plot(xlim, [0 0], '-k');
+        plot(emg(c,19),0,'r.','MarkerSize',25);
+        plot(emg(c,8),0,'g.','MarkerSize',25);
+        hold off;
     end
 end
 
