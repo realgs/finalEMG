@@ -3,7 +3,7 @@ function [ result ] = estimator3( emg, w, h, g)
 %the precise detection (2nd phase) based on signal sign changes.
 if nargin<4
     g=0;
-end
+end   
 
 emg(1:6,13) = 0;
 variances = zeros(length(emg),6);
