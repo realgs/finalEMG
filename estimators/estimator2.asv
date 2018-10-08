@@ -1,10 +1,11 @@
 function [ result ] = estimator3( emg, w, h, g)
-%A muscle activity estimator based on variance and moving window frame
+%A muscle activity estimator based on a mathematical model of a signal (1st phase) and
+%the precise detection (2nd phase) based on signal sign changes.
 if nargin<4
     g=0;
 end   
 
-emg(1:6,13) = 0;
+emg(1:6,10) = 0;
 variances = zeros(length(emg),6);
 result(1:6) = 5000;
 
@@ -14,32 +15,13 @@ w2 = round(w/2);
 %data processing
 initialVar = var(emg(1 : w2 * 2 + 1,1:6));
 
-for c = 1:6
-    for n = 1 + w2 : length(emg) - w2
-        variances(n,c) = var(emg(n - w2 : n + w2, c));
-    end
-end
-highVar = max( variances(:,1:6) );
-
-thresholdVar = initialVar + (highVar - initialVar) * h;
-
 %evaluation stage
 for c = 1:6
     for n = 1 + w2 : length(emg) - w2
         currentVar = variances(n,c);
         if currentVar > thresholdVar(c) 
-           emg(c,13) = n;
-           result(c) = emg(c,13) - emg(c,8);
-           break
-        end
-    end
-end
-%calculate sign changes around beginnings
-for c = 1:6
-    for n = emg(c,13) - 250 : emg(c,13) + 250
-        currentVar = variances(n,c);
-        if currentVar > thresholdVar(c)
-           result(c) = emg(c,13) - emg(c,8);%!?!?!?!?!??!?!?!?!?!?!HERE YOU NEED TO WRITE DOWN THE NEW ONSET LIKE emg(c,13) = n;
+           emg(c,10) = n;
+           result(c) = emg(c,10) - emg(c,8);
            break
         end
     end
