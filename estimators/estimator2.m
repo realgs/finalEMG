@@ -15,6 +15,15 @@ w2 = round(w/2);
 %data processing
 initialVar = var(emg(1 : w2 * 2 + 1,1:6));
 
+for c = 1:6
+    for n = 1 + w2 : length(emg) - w2
+        variances(n,c) = var(emg(n - w2 : n + w2, c));
+    end
+end
+highVar = max( variances(:,1:6) );
+
+thresholdVar = initialVar + (highVar - initialVar) * h;
+
 %evaluation stage
 for c = 1:6
     for n = 1 + w2 : length(emg) - w2
@@ -43,7 +52,7 @@ if g==1
 
         hold on;
         plot(xlim, [0 0], '-k')
-        plot(emg(c,13),0,'r.','MarkerSize',25);
+        plot(emg(c,10),0,'r.','MarkerSize',25);
         plot(emg(c,8),0,'g.','MarkerSize',25);
         hold off;
         
