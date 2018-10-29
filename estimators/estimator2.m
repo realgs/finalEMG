@@ -25,6 +25,7 @@ highVar = max( variances(:,1:6) );
 thresholdVar = initialVar + (highVar - initialVar) * h;
 
 %evaluation stage
+%1st phase
 for c = 1:6
     for n = 1 + w2 : length(emg) - w2
         if emg(n,c) > h 
@@ -34,6 +35,17 @@ for c = 1:6
         end
     end
 end
+%2nd phase
+for c = 1:6
+    for n = 1 + w2 : length(emg) - w2
+        if emg(n,c) > h 
+           emg(c,10) = n;
+           result(c) = emg(c,10) - emg(c,8);
+           break
+        end
+    end
+end
+
 
 %data visualization
 if g==1
