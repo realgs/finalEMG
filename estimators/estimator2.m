@@ -1,82 +1,89 @@
-function [ result ] = estimator2( emg, w, h, g)
+function [emg] = estimator2(emg, k, windowSize, g)
 %A muscle activity estimator based on signal sign changes.
+
+%meanError=0;
+
+%fitting k-parameter
+%k=1+k/10;
+k=k/10;
+% Set displaying to false in case of too less arguments given
 if nargin<4
     g=0;
-end   
+end
 
-emg(1:6,10) = 0;
-variances = zeros(length(emg),6);
-result(1:6) = 5000;
-
-%halving the window size - rounding to the nearest even value
-w2 = round(w/2);
-
-%data processing
-initialVar = var(emg(1 : w2 * 2 + 1,1:6));
-
-for c = 1:6
-    for n = 1 + w2 : length(emg) - w2
-        variances(n,c) = var(emg(n - w2 : n + w2, c));
+%Counting sign changes combined with higher values of changes
+signsTable=sign(emg);
+for c=1:6
+    d=0.04;%0.04 tested fairly well
+    if max(abs(diff(emg(1:windowSize*0.5,c))))<0.035 && max(abs(emg(:,c)))<0.31
+        d=0.0005;
+        k=1.3;
+    end
+    if max(abs(diff(emg(1:windowSize*0.5,c))))<0.015 && max(abs(emg(:,c)))<0.1
+        d=0.00001;
+        k=1.5;
+    end
+    h(c) = (max(abs(diff(emg(1:windowSize*1.5,c))))+d)*k;
+    %h(c) = (mean(abs(diff(emg(1:windowSize*1.5,c))))+0.005)*k*(max(emg(:,c))+0.75);
+    %h(c) = k;
+    
+    for i=round(windowSize / 2) : size(emg,1) - round(windowSize / 2)
+        counter = 0;
+        %            actVar = var(emg(i-round(windowSize / 2)+1:i+round(windowSize / 2)-1,c));
+        %            noiseVar = var(emg(1:windowSize-2,c));
+        for j=(i-round(windowSize/2)+1):(i+round(windowSize/2)-1)
+            if(signsTable(j,c) == signsTable(j+1,c) && (abs(emg(j,c))-abs(emg(j+1,c)))>h(c))
+                counter = counter+1;
+            end
+        end
+        
+        variabilities(i,c) = counter;
     end
 end
-highVar = max( variances(:,1:6) );
-
-thresholdVar = initialVar + (highVar - initialVar) * h;
-
-%evaluation stage
-%1st phase
-for c = 1:6
-    for n = 1 + w2 : length(emg) - w2
-        if emg(n,c) > h 
-           emg(c,10) = n;
-           result(c) = emg(c,10) - emg(c,8);
-           break
+for c=1:6
+    emg(c,9) = 0;
+    flag=0;
+    for i = 1 : size(variabilities)
+        %Detecting condition
+        if(variabilities(i,c)>2 && flag==0 && abs(emg(i,c))>0.01)
+            flag = 1;
+            %Writing results
+            emg(c,9) = i;
+            %meanError = meanError + abs(i-emg(c,8));
+            break
         end
     end
 end
-%2nd phase
-for c = 1:6
-    for n = 1 + w2 : length(emg) - w2
-        if emg(n,c) > h 
-           emg(c,10) = n;
-           result(c) = emg(c,10) - emg(c,8);
-           break
-        end
-    end
-end
+%emg(8,8)=meanError;
+%meanError = meanError/6;
 
 
-%data visualization
 if g==1
     for c=1:6
-        figure('units','normalized','outerposition',[0 0 1 1]);
-        %set(gcf,'color','w');
+        figure();
+        set(gcf,'color','w');
+        %figure('units','normalized','outerposition',[0 0 1 1]);
         subplot(2,1,1);
         plot(emg(:,c));
-        title('EMG Signal','FontSize',16);
-        %for scatter:
-        %Xs = [1:length(emg)];
-        %scatter(Xs,emg(:,c));
-        
+        title('Original EMG Signal','FontSize',16)
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
-
+        
         hold on;
-        plot(xlim, [0 0], '-k')
-        plot(emg(c,10),0,'r.','MarkerSize',25);
+        plot(emg(c,9),0,'r.','MarkerSize',25);
         plot(emg(c,8),0,'g.','MarkerSize',25);
         hold off;
         
+        %figure('units','normalized','outerposition',[0 0 1 1]);
         subplot(2,1,2);
-        plot(variances(:,c));
-        title('Signal Variance','FontSize',16);
+        plot(variabilities(1:size(variabilities,1),c));
+        title('Sign Changes Algorithm','FontSize',16)
+        xlabel('t = [ms]')
+        ylabel('Sign changes')
+        
         hold on;
-        plot(xlim, [thresholdVar(c) thresholdVar(c)], '-g')
-        plot(xlim, [highVar(c) highVar(c)], '-k')
-        plot(xlim, [initialVar(c) initialVar(c)], '-r')
+        plot(emg(c,9),0,'r.','MarkerSize',25);
+        plot(emg(c,8),0,'g.','MarkerSize',25);
         hold off;
     end
 end
-
-end
-
