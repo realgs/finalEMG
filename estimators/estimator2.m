@@ -1,6 +1,5 @@
 function [ result ] = estimator2( emg, w, h, g)
-%A muscle activity estimator based on a mathematical model of a signal (1st phase) and
-%the precise detection (2nd phase) based on signal sign changes.
+%A muscle activity estimator based on signal sign changes.
 if nargin<4
     g=0;
 end   

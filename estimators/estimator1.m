@@ -1,5 +1,5 @@
 function [ result ] = estimator1( emg, w, h, g)
-%A muscle activity estimator based on a mathematical model of sEMG signal (1st phase) and
+%A muscle activity estimator called SignModel based on a mathematical model of sEMG signal (1st phase) and
 %the precise detection (2nd phase) based on signal sign changes.
 if nargin<4
     g=0;
