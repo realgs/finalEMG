@@ -1,12 +1,16 @@
 %script that helps find a considerably good input parameters by applying brute search
-best = [5000 5000 5000 5000 5000 5000];
-bestArg = 0;
-for n = 0.000000000001:0.0000002:0.0001
-    result = estimator7(emg11, n, 3);
-    if sum(result) < sum (best)
-        best = result;
-        bestArg = n;
+best = 5000;
+bestParam = [0 0];
+
+for m = 2.2 : 0.4 : 15
+    for w = 80 : 4 : 200
+        tempBest = mean(abs(estimator2(B01fsbrzuch1, m, w, 0)));
+        if tempBest < best
+            best = tempBest;
+            bestParam = [m w];
+        end
     end
 end
-bestArg
-sum(best)/6
+
+best 
+bestParam
