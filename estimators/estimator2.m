@@ -1,40 +1,41 @@
 function [result] = estimator2(emg, k, windowSize, g)
 %A muscle activity estimator based on signal sign changes.
 
-%meanError=0;
-
-%fitting k-parameter
-%k=1+k/10;
-k=k/10;
-% Set displaying to false in case of too less arguments given
+% Set displaying to false in case of too few arguments given
 if nargin<4
     g=0;
 end
-result(1:6) = 5000;
-variabilities = zeros(5000,6);
 
-%Counting sign changes combined with higher values of changes
-signsTable=sign(emg);
-for c=1:6
-    d=0.04;%0.04 tested fairly well
-    if max(abs(diff(emg(1:windowSize*0.5,c))))<0.035 && max(abs(emg(:,c)))<0.31
-        d=0.0005;
-        k=1.3;
+k(1:6) = k / 10;
+d(1:6) = 0.04;
+result(1:6) = 5000;
+h = ones(1,6);
+variabilities = zeros(5000,6);
+derivatives = diff(emg(:, 1:6));
+signsTable = sign(emg);
+smallWindow = round(windowSize / 2);
+largeWindow = windowSize * 1.5;
+
+%Counting sign changes combined with higher values of derivatives
+for c = 1:6
+    if max(abs(diff(emg(1:smallWindow,c)))) < 0.035 && max(abs(emg(:,c))) < 0.31
+        d(c) = 0.0005;
+        k(c) = 1.3;
     end
-    if max(abs(diff(emg(1:windowSize*0.5,c))))<0.015 && max(abs(emg(:,c)))<0.1
-        d=0.00001;
-        k=1.5;
+    if max(abs(diff(emg(1:smallWindow,c)))) < 0.015 && max(abs(emg(:,c))) < 0.1
+        d(c) = 0.00001;
+        k(c) = 1.5;
     end
-    h(c) = (max(abs(diff(emg(1:windowSize*1.5,c))))+d)*k;
-    %h(c) = (mean(abs(diff(emg(1:windowSize*1.5,c))))+0.005)*k*(max(emg(:,c))+0.75);
-    %h(c) = k;
+    h(c) = (max(abs(diff(emg(1:largeWindow,c)))) + d(c)) * k(c);
+    %h(c) = (mean(abs(diff(emg(1:largeWindow,c))))+0.005) * k(c) * (max(emg(:,c))+0.75);
+    %h(c) = k(c);
     
-    for i=round(windowSize / 2) : size(emg,1) - round(windowSize / 2)
+    for i = smallWindow : size(emg,1) - smallWindow
         counter = 0;
-        %            actVar = var(emg(i-round(windowSize / 2)+1:i+round(windowSize / 2)-1,c));
+        %            actVar = var(emg(i-smallWindow+1:i+smallWindow-1,c));
         %            noiseVar = var(emg(1:windowSize-2,c));
         for j=(i-round(windowSize/2)+1):(i+round(windowSize/2)-1)
-            if(signsTable(j,c) == signsTable(j+1,c) && (abs(emg(j,c))-abs(emg(j+1,c)))>h(c))
+            if(signsTable(j,c) == signsTable(j+1,c) && (abs(emg(j,c))-abs(emg(j+1,c))) > h(c))
                 counter = counter+1;
             end
         end
@@ -42,6 +43,7 @@ for c=1:6
         variabilities(i,c) = counter;
     end
 end
+
 for c=1:6
     emg(c,9) = 0;
     for i = 1 : size(variabilities)
@@ -79,7 +81,7 @@ if g==1
         ylabel('Sign changes')
         
         hold on;
-        plot(emg(c,9),0,'r.','MarkerSize',25);
+        plot(emg(c,9),0,'r.','MarkerSize',15);
         plot(emg(c,8),0,'g.','MarkerSize',25);
         hold off;
     end
