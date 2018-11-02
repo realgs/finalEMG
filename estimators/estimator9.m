@@ -1,4 +1,4 @@
-function [ result ] = estimator9( emg, w, h, duration, g)
+function [ results ] = estimator9( emg, w, h, duration, g)
 %A muscle activity estimator based on Londral et al. algorithm (2013)
 
 if nargin<5
@@ -7,7 +7,7 @@ end
 
 emg(1:6,19) = 0;
 flag(1:6) = 0;
-result(1:6) = 5000;
+results(1:6) = 5000;
 
 %data processing
 initialMean(1:6) = mean(abs(emg(1:w, 1:6)));
@@ -26,7 +26,7 @@ for c = 1:6
         end     
         if flag(c) == 0 && countSubsequent >= duration
             emg(c,19) = n;
-            result(c) = emg(c,19) - emg(c,8);
+            results(c) = emg(c,19) - emg(c,8);
             flag(c) = 1;
         end
     end

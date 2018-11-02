@@ -1,4 +1,4 @@
-function [ result ] = estimator4( emg, w, h, g)
+function [ results ] = estimator4( emg, w, h, g)
 %A muscle activity estimator based on Hodges and Bui algorithm
 
 if nargin<4
@@ -7,7 +7,7 @@ end
 
 emg(1:6,14) = 0;
 flag(1:6) = 0;
-result(1:6) = 5000;
+results(1:6) = 5000;
 
 %data processing
 initialMean(1:6) = mean(abs(emg(1:w, 1:6)));
@@ -20,7 +20,7 @@ for c = 1:6
         currentFVal = currentMean - initialMean(c);
         if flag(c) == 0 && currentFVal > h * initialStd(c)^2
            emg(c,14) = n;
-           result(c) = emg(c,14) - emg(c,8);
+           results(c) = emg(c,14) - emg(c,8);
            flag(c) = 1;
         end
     end

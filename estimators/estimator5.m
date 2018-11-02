@@ -1,4 +1,4 @@
-function [ result ] = estimator5( emg, h, duration, numOfAllActive, poolSize, g)
+function [ results ] = estimator5( emg, h, duration, numOfAllActive, poolSize, g)
 %A muscle activity estimator based on Bonato et al. algorithm
 
 if nargin<6
@@ -9,7 +9,7 @@ w = 100;
 
 emg(1:6,15) = 0;
 flag(1:6) = 0;
-result(1:6) = 5000;
+results(1:6) = 5000;
 
 %data processing
 initialVar(1:6) = var(emg(1:w, 1:6));
@@ -34,7 +34,7 @@ for c = 1:6
             
         if flag(c) == 0 &&  countSubsequent >= duration && countAll >= numOfAllActive
            emg(c,15) = n;
-           result(c) = emg(c,15) - emg(c,8);
+           results(c) = emg(c,15) - emg(c,8);
            flag(c) = 1;
         end
     end

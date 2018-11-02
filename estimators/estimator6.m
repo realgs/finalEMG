@@ -1,4 +1,4 @@
-function [ result ] = estimator6( emg, w, h, duration, poolSize, g)
+function [ results ] = estimator6( emg, w, h, duration, poolSize, g)
 %A muscle activity estimator based on Lidierth algorithm
 
 if nargin<6
@@ -7,7 +7,7 @@ end
 
 emg(1:6,16) = 0;
 flag(1:6) = 0;
-result(1:6) = 5000;
+results(1:6) = 5000;
 
 %data processing
 initialMean(1:6) = mean(abs(emg(1:w, 1:6)));
@@ -34,7 +34,7 @@ for c = 1:6
         
         if flag(c) == 0 && countSubsequent >= duration && countAll >= 1
             emg(c,16) = n;
-            result(c) = emg(c,16) - emg(c,8);
+            results(c) = emg(c,16) - emg(c,8);
             flag(c) = 1;
         end
     end

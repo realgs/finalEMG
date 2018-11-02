@@ -1,4 +1,4 @@
-function [ result ] = estimator7( emg, h, duration, g)
+function [ results ] = estimator7( emg, h, duration, g)
 %A muscle activity estimator based on Solnik et al. algorithm (TKOperator)
 
 if nargin<4
@@ -7,7 +7,7 @@ end
 
 emg(1:6,17) = 0;
 flag(1:6) = 0;
-result(1:6) = 5000;
+results(1:6) = 5000;
 
 %data processing
 initialMean(1:6) = mean(abs(emg(1:100, 1:6)));
@@ -28,7 +28,7 @@ for c = 1:6
         
         if flag(c) == 0 && countSubsequent >= duration
             emg(c,17) = n;
-            result(c) = emg(c,17) - emg(c,8);
+            results(c) = emg(c,17) - emg(c,8);
             flag(c) = 1;
         end
     end

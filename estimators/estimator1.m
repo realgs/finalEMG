@@ -1,4 +1,4 @@
-function [ result ] = estimator1( emg, w, h, g)
+function [ results ] = estimator1( emg, windowSize, h, g)
 %A muscle activity estimator called SignModel based on a mathematical model of sEMG signal (1st phase) and
 %the precise detection (2nd phase) based on signal sign changes.
 if nargin<4
@@ -7,40 +7,40 @@ end
 
 emg(1:6,10) = 0;
 variances = zeros(length(emg),6);
-result(1:6) = 5000;
+results(1:6) = 5000;
 
 %halving the window size - rounding to the nearest even value
-w2 = round(w/2);
+smallWindow = round(windowSize/2);
 
 %data processing
-initialVar = var(emg(1 : w2 * 2 + 1,1:6));
+initialVar = var(emg(1 : smallWindow * 2 + 1,1:6));
 
 for c = 1:6
-    for n = 1 + w2 : length(emg) - w2
-        variances(n,c) = var(emg(n - w2 : n + w2, c));
+    for n = 1 + smallWindow : length(emg) - smallWindow
+        variances(n,c) = var(emg(n - smallWindow : n + smallWindow, c));
     end
 end
-highVar = max( variances(:,1:6) );
+activVar = max( variances(:,1:6) );
 
-thresholdVar = initialVar + (highVar - initialVar) * h;
+thresholdVar = initialVar + (activVar - initialVar) * h;
 
 %evaluation stage
 %1st phase
 for c = 1:6
-    for n = 1 + w2 : length(emg) - w2
+    for n = 1 + smallWindow : length(emg) - smallWindow
         if emg(n,c) > h 
            emg(c,10) = n;
-           result(c) = emg(c,10) - emg(c,8);
+           results(c) = emg(c,10) - emg(c,8);
            break
         end
     end
 end
 %2nd phase
 for c = 1:6
-    for n = 1 + w2 : length(emg) - w2
+    for n = 1 + smallWindow : length(emg) - smallWindow
         if emg(n,c) > h 
            emg(c,10) = n;
-           result(c) = emg(c,10) - emg(c,8);
+           results(c) = emg(c,10) - emg(c,8);
            break
         end
     end
@@ -73,7 +73,7 @@ if g==1
         title('Signal Variance','FontSize',16);
         hold on;
         plot(xlim, [thresholdVar(c) thresholdVar(c)], '-g')
-        plot(xlim, [highVar(c) highVar(c)], '-k')
+        plot(xlim, [activVar(c) activVar(c)], '-k')
         plot(xlim, [initialVar(c) initialVar(c)], '-r')
         hold off;
     end

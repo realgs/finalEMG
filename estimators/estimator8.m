@@ -1,4 +1,4 @@
-function [ result ] = estimator8( emg, w1, w2, h, g)
+function [ results ] = estimator8( emg, w1, w2, h, g)
 %A muscle activity estimator based on Silva et al. algorithm (2012)
 
 if nargin<5
@@ -7,7 +7,7 @@ end
 
 emg(1:6,18) = 0;
 flag(1:6) = 0;
-result(1:6) = 5000;
+results(1:6) = 5000;
 
 if w2 < w1
     beginning = w1;
@@ -22,7 +22,7 @@ for c = 1:6
         currentAdaptiveThreshold = mean(abs(emg(n-w2+1 : n, c)));
         if currentFval >= currentAdaptiveThreshold && currentFval >= h
             emg(c,18) = n;
-            result(c) = emg(c,18) - emg(c,8);
+            results(c) = emg(c,18) - emg(c,8);
             break
         end
     end

@@ -1,4 +1,4 @@
-function [ result ] = estimator3( emg, w, h, g)
+function [ results ] = estimator3( emg, w, h, g)
 %A muscle activity estimator based on hidden factor and moving window frame
 if nargin<4
     g=0;
@@ -6,7 +6,7 @@ end
 
 emg(1:6,13) = 0;
 variances = zeros(length(emg),6);
-result(1:6) = 5000;
+results(1:6) = 5000;
 
 %halving the window size - rounding to the nearest even value
 w2 = round(w/2);
@@ -29,7 +29,7 @@ for c = 1:6
         currentVar = variances(n,c);
         if currentVar > thresholdVar(c) 
            emg(c,13) = n;
-           result(c) = emg(c,13) - emg(c,8);
+           results(c) = emg(c,13) - emg(c,8);
            break
         end
     end
@@ -39,7 +39,7 @@ for c = 1:6
     for n = emg(c,13) - 250 : emg(c,13) + 250
         currentVar = variances(n,c);
         if currentVar > thresholdVar(c)
-           result(c) = emg(c,13) - emg(c,8);%!?!?!?!?!??!?!?!?!?!?!HERE YOU NEED TO WRITE DOWN THE NEW ONSET LIKE emg(c,13) = n;
+           results(c) = emg(c,13) - emg(c,8);%!?!?!?!?!??!?!?!?!?!?!HERE YOU NEED TO WRITE DOWN THE NEW ONSET LIKE emg(c,13) = n;
            break
         end
     end

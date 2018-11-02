@@ -1,4 +1,4 @@
-function [result] = estimator2(emg, k, windowSize, g)
+function [results] = estimator2(emg, k, windowSize, g)
 %A muscle activity estimator based on signal sign changes.
 
 % Set displaying to false in case of too few arguments given
@@ -8,7 +8,7 @@ end
 
 k(1:6) = k / 10;
 d(1:6) = 0.04;
-result(1:6) = 5000;
+results(1:6) = 5000;
 h = ones(1,6);
 variabilities = zeros(5000,6);
 derivatives = diff(emg(:, 1:6));
@@ -49,7 +49,7 @@ for c=1:6
         %Detection condition
         if(variabilities(i,c)>2 && abs(emg(i,c))>0.01)
             emg(c,9) = i;
-            result(c) = emg(c,9) - emg(c,8);
+            results(c) = emg(c,9) - emg(c,8);
             break
         end
     end
