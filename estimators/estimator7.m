@@ -19,7 +19,7 @@ for c = 1:6
         countSubsequent = 0;
         for m = n : n + duration - 1
             currentEnergy = abs(emg(m, c)^2 - emg(m-1, c) * emg(m+1, c));
-            if currentEnergy > initialMean(c) + h * initialStd(c) 
+            if currentEnergy > initialMean(c) + h * initialStd(c)
                 countSubsequent = countSubsequent + 1;
             else
                 break

@@ -18,12 +18,12 @@ for c = 1:6
     for n = w : length(emg)
         countSubsequent = 0;
         for m = n : n + duration - 1
-            if currentFval > initialMean(c) + h * initialStd(c) 
+            if currentFval > initialMean(c) + h * initialStd(c)
                 countSubsequent = countSubsequent + 1;
             else
                 break
             end
-        end     
+        end
         if flag(c) == 0 && countSubsequent >= duration
             emg(c,19) = n;
             results(c) = emg(c,19) - emg(c,8);

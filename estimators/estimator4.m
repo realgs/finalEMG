@@ -19,9 +19,9 @@ for c = 1:6
         currentMean = mean(abs(emg(n-w+1:n, c)));
         currentFVal = currentMean - initialMean(c);
         if flag(c) == 0 && currentFVal > h * initialStd(c)^2
-           emg(c,14) = n;
-           results(c) = emg(c,14) - emg(c,8);
-           flag(c) = 1;
+            emg(c,14) = n;
+            results(c) = emg(c,14) - emg(c,8);
+            flag(c) = 1;
         end
     end
 end
@@ -39,7 +39,7 @@ if g==1
         
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
-
+        
         hold on;
         plot(xlim, [0 0], '-k');
         plot(emg(c,14),0,'r.','MarkerSize',25);

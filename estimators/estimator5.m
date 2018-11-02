@@ -31,11 +31,11 @@ for c = 1:6
                 isSubsequent = 0;
             end
         end
-            
-        if flag(c) == 0 &&  countSubsequent >= duration && countAll >= numOfAllActive
-           emg(c,15) = n;
-           results(c) = emg(c,15) - emg(c,8);
-           flag(c) = 1;
+        
+        if flag(c) == 0 && countSubsequent >= duration && countAll >= numOfAllActive
+            emg(c,15) = n;
+            results(c) = emg(c,15) - emg(c,8);
+            flag(c) = 1;
         end
     end
 end
@@ -53,7 +53,7 @@ if g==1
         
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
-
+        
         hold on;
         plot(xlim, [0 0], '-k');
         plot(emg(c,15),0,'r.','MarkerSize',25);

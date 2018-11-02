@@ -1,24 +1,17 @@
 function [results] = estimator2(emg, k, windowSize, start, stop, g)
 %A muscle activity estimator based on signal sign changes.
 
-smallWindow = round(windowSize / 2);
 % Set displaying to false in case of too few arguments given
 if nargin < 4
-    start = 1;
+    start = 0;
 end
 if nargin < 5
-    stop = size(emg,1);
+    stop = 0;
 end
 if nargin < 6
     g=0;
 end
 
-if start <= smallWindow
-    start = smallWindow + 1;
-end
-if stop > (size(emg,1) - smallWindow)
-   stop = (size(emg,1) - smallWindow);
-end
 
 k(1:6) = k / 10;
 d(1:6) = 0.04;
@@ -27,6 +20,7 @@ h = ones(1,6);
 variabilities = zeros(stop,6);
 derivatives = diff(emg(:, 1:6));
 signsTable = sign(emg);
+smallWindow = round(windowSize / 2);
 
 %Counting sign changes combined with higher values of derivatives
 for c = 1:6
@@ -42,7 +36,7 @@ for c = 1:6
     %h(c) = (mean(abs(diff(emg(1:largeWindow,c))))+0.005) * k(c) * (max(emg(:,c))+0.75);
     %h(c) = k(c);
     
-    for i = start:stop
+    for i = start + smallWindow : stop - smallWindow
         counter = 0;
         %            actVar = var(emg(i-smallWindow+1:i+smallWindow-1,c));
         %            noiseVar = var(emg(1:windowSize-2,c));
@@ -51,15 +45,16 @@ for c = 1:6
                 counter = counter + 1;
             end
         end
+        
         variabilities(i,c) = counter;
     end
 end
 
 for c=1:6
     emg(c,9) = 0;
-    for i = start : stop
+    for i = 1 : size(variabilities)
         %Detection condition
-        if(variabilities(i,c) > 2 && abs(emg(i,c)) > 0.01)
+        if(variabilities(i,c)>2 && abs(emg(i,c))>0.01)
             emg(c,9) = i;
             results(c) = emg(c,9) - emg(c,8);
             break

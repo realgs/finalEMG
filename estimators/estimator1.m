@@ -3,7 +3,7 @@ function [ results ] = estimator1( emg, windowSize, h, g)
 %the precise detection (2nd phase) based on signal sign changes.
 if nargin<4
     g=0;
-end   
+end
 
 emg(1:6,10) = 0;
 variances = zeros(length(emg),6);
@@ -28,20 +28,20 @@ thresholdVar = initialVar + (activVar - initialVar) * h;
 %1st phase
 for c = 1:6
     for n = 1 + smallWindow : length(emg) - smallWindow
-        if emg(n,c) > h 
-           emg(c,10) = n;
-           results(c) = emg(c,10) - emg(c,8);
-           break
+        if emg(n,c) > h
+            emg(c,10) = n;
+            results(c) = emg(c,10) - emg(c,8);
+            break
         end
     end
 end
 %2nd phase
 for c = 1:6
     for n = 1 + smallWindow : length(emg) - smallWindow
-        if emg(n,c) > h 
-           emg(c,10) = n;
-           results(c) = emg(c,10) - emg(c,8);
-           break
+        if emg(n,c) > h
+            emg(c,10) = n;
+            results(c) = emg(c,10) - emg(c,8);
+            break
         end
     end
 end
@@ -61,7 +61,7 @@ if g==1
         
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
-
+        
         hold on;
         plot(xlim, [0 0], '-k')
         plot(emg(c,10),0,'r.','MarkerSize',25);
