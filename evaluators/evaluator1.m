@@ -1,6 +1,5 @@
 function [avg, absMean] = evaluator1(windowSize,threshold)
-%EVALUATOR1 Summary of this function goes here
-%   Detailed explanation goes here
+%The evaluator for estimator1
 load('database.mat')
 results = zeros(10,6);
 results(1, :) = estimator1(emg1, windowSize, threshold, 0);

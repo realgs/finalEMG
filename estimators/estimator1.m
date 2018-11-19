@@ -7,6 +7,7 @@ end
 
 emg(1:6,10) = 0;
 variances = zeros(length(emg),6);
+initialOnsets(1:6) = 5000;
 results(1:6) = 5000;
 
 %halving the window size - rounding to the nearest even value
@@ -22,28 +23,23 @@ for c = 1:6
 end
 activVar = max( variances(:,1:6) );
 thresholdVar = initialVar + (activVar - initialVar) * h;
+thresholdVar2 = initialVar + (activVar - initialVar) * 1.5 * h;
+thresholdVar3 = initialVar + (activVar - initialVar) * 2 * h;
 
 %evaluation stage
 %1st phase
 for c = 1:6
     for n = 1 + windowSize : length(emg) - windowSize
-        if variances(n,c) > thresholdVar(c)
-            emg(c,10) = n;
-            results(c) = emg(c, 10) - emg(c,8);
+        if variances(n,c) > thresholdVar(c) && variances(n + smallWindow,c) > thresholdVar2(c) && variances(n + windowSize,c) > thresholdVar3(c)
+            initialOnsets(c) = n;
             break
         end
     end
 end
 %2nd phase
-% for c = 1:6
-%     for n = 1 + windowSize : length(emg) - windowSize
-%         if emg(n,c) > h
-%             emg(c,10) = n;
-%             results(c) = emg(c,10) - emg(c,8);
-%             break
-%         end
-%     end
-% end
+%for c = 1:6
+    [results, emg] = estimator2(emg, 7, windowSize, initialOnsets, initialOnsets - smallWindow, initialOnsets + smallWindow, 1);
+%end
 
 
 %data visualization

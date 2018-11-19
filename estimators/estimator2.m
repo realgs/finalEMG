@@ -1,30 +1,40 @@
-function [results] = estimator2(emg, k, windowSize, start, stop, g)
+function [results, emg] = estimator2(emg, k, windowSize, initialOnsets, starts, stops, ensemble, g)
 %A muscle activity estimator based on signal sign changes.
 
 smallWindow = round(windowSize / 2);
 % Set inputs if too few arguments given
 if nargin < 4
-    start = smallWindow;
+    starts = ones(1,6) * smallWindow;
 end
 if nargin < 5
-    stop = (size(emg,1) - smallWindow);
+    stops = ones(1,6) * (size(emg,1) - smallWindow);
 end
-if nargin < 6
-    g=0;
+if nargin < 7
+    ensemble = 0;
+end
+if nargin < 8
+    g = 0;
 end
 
-if start < smallWindow
-    start = smallWindow;
+if ensemble == 1
+    writeDest = 10;
+    emg(1:6, 10) = initialOnsets;
+else 
+    writeDest = 9;
 end
-if stop > (size(emg,1) - smallWindow)
-   stop = (size(emg,1) - smallWindow);
+
+if starts < smallWindow
+    starts = ones(1,6) * smallWindow;
+end
+if stops > (size(emg,1) - smallWindow)
+   stops = ones(1,6) * (size(emg,1) - smallWindow);
 end
 
 k(1:6) = k / 10;
 d(1:6) = 0.04;
 results(1:6) = 5000;
-h = ones(1,6);
-variabilities = zeros(stop,6);
+h = ones(1, 6);
+variabilities = zeros(5000,6);
 derivatives = diff(emg(:, 1:6));
 signsTable = sign(emg);
 
@@ -42,7 +52,7 @@ for c = 1:6
     %h(c) = (mean(abs(diff(emg(1:largeWindow,c))))+0.005) * k(c) * (max(emg(:,c))+0.75);
     %h(c) = k(c);
     
-    for i = start:stop
+    for i = starts(c):stops(c)
         counter = 0;
         %            actVar = var(emg(i-smallWindow+1:i+smallWindow-1,c));
         %            noiseVar = var(emg(1:windowSize-2,c));
@@ -56,18 +66,17 @@ for c = 1:6
 end
 
 for c=1:6
-    emg(c,9) = 0;
-    for i = start : stop
+    for i = starts(c) : stops(c)
         %Detection condition
         if(variabilities(i,c) > 2 && abs(emg(i,c)) > 0.01)
-            emg(c,9) = i;
-            results(c) = emg(c,9) - emg(c,8);
+            emg(c,writeDest) = i;
+            results(c) = emg(c,writeDest) - emg(c,8);
             break
         end
     end
 end
 
-if g==1
+if g == 1
     for c=1:6
         figure();
         set(gcf,'color','w');
@@ -79,7 +88,7 @@ if g==1
         ylabel('EMG = [mv]')
         
         hold on;
-        plot(emg(c,9),0,'r.','MarkerSize',25);
+        plot(emg(c,writeDest),0,'r.','MarkerSize',25);
         plot(emg(c,8),0,'g.','MarkerSize',25);
         hold off;
         
@@ -91,7 +100,7 @@ if g==1
         ylabel('Sign changes')
         
         hold on;
-        plot(emg(c,9),0,'r.','MarkerSize',15);
+        plot(emg(c,writeDest),0,'r.','MarkerSize',15);
         plot(emg(c,8),0,'g.','MarkerSize',25);
         hold off;
     end
