@@ -31,12 +31,12 @@ signsTable = sign(emg);
 %Counting sign changes combined with higher values of derivatives
 for c = 1:6
     if max(abs(derivatives(1:smallWindow,c))) < 0.035 && max(abs(emg(:,c))) < 0.31
-        d(c) = 0.0005
-        k(c) = 1.3
+        d(c) = 0.0005;
+        k(c) = 1.3;
     end
     if max(abs(derivatives(1:smallWindow,c))) < 0.015 && max(abs(emg(:,c))) < 0.1
-        d(c) = 0.00001
-        k(c) = 1.5
+        d(c) = 0.00001;
+        k(c) = 1.5;
     end
     h(c) = (max(abs(derivatives(1:smallWindow,c))) + d(c)) * k(c);
     %h(c) = (mean(abs(diff(emg(1:largeWindow,c))))+0.005) * k(c) * (max(emg(:,c))+0.75);

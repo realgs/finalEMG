@@ -13,38 +13,37 @@ results(1:6) = 5000;
 smallWindow = round(windowSize/2);
 
 %data processing
-initialVar = var(emg(1 : smallWindow * 2 + 1,1:6));
+initialVar = var(emg(1 : windowSize * 2 + 1,1:6));
 
 for c = 1:6
-    for n = 1 + smallWindow : length(emg) - smallWindow
-        variances(n,c) = var(emg(n - smallWindow : n + smallWindow, c));
+    for n = 1 + windowSize : length(emg) - windowSize
+        variances(n,c) = var(emg(n - windowSize : n + windowSize, c));
     end
 end
 activVar = max( variances(:,1:6) );
-
 thresholdVar = initialVar + (activVar - initialVar) * h;
 
 %evaluation stage
 %1st phase
 for c = 1:6
-    for n = 1 + smallWindow : length(emg) - smallWindow
-        if emg(n,c) > h
+    for n = 1 + windowSize : length(emg) - windowSize
+        if variances(n,c) > thresholdVar(c)
             emg(c,10) = n;
-            results(c) = emg(c,10) - emg(c,8);
+            results(c) = emg(c, 10) - emg(c,8);
             break
         end
     end
 end
 %2nd phase
-for c = 1:6
-    for n = 1 + smallWindow : length(emg) - smallWindow
-        if emg(n,c) > h
-            emg(c,10) = n;
-            results(c) = emg(c,10) - emg(c,8);
-            break
-        end
-    end
-end
+% for c = 1:6
+%     for n = 1 + windowSize : length(emg) - windowSize
+%         if emg(n,c) > h
+%             emg(c,10) = n;
+%             results(c) = emg(c,10) - emg(c,8);
+%             break
+%         end
+%     end
+% end
 
 
 %data visualization
