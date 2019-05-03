@@ -36,10 +36,10 @@ for c = 1:6
 end
 %calculate sign changes around beginnings
 for c = 1:6
-    for n = emg(c,13) - 250 : emg(c,13) + 250
+    for n = emg(c,13) - 250 : emg(c,13) + 250%BEFORE ADJUSTING TAKE A LOOK AT THIS LINE -----------<<<<<<<<<
         currentVar = variances(n,c);
         if currentVar > thresholdVar(c)
-            results(c) = emg(c,13) - emg(c,8);%!?!?!?!?!??!?!?!?!?!?!HERE YOU NEED TO WRITE DOWN THE NEW ONSET LIKE emg(c,13) = n;
+            results(c) = emg(c,13) - emg(c,8);%ADJUST TO THE COMPARISON FRAMEWORK --- HERE YOU NEED TO WRITE DOWN THE NEW ONSET LIKE emg(c,13) = n;
             break
         end
     end

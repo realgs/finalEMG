@@ -46,7 +46,16 @@ xWindowSize = 1;
 xValues = zeros(length(emg),6);
 for c = 1:6
     for n = 1 + xWindowSize : length(emg) - xWindowSize
-        xValues(n, c) = emg(n, 1) * emg(n-1, 1) * emg(n+1, 1);
+        xValues(n, c) = 1 / (emg(n, 1) * emg(n-1, 1) * emg(n+1, 1));
+    end
+end
+
+%Variance temp algorithm
+varWindowSize = 40;
+varValues = zeros(length(emg),6);
+for c = 1:6
+    for n = 1 : length(emg) - varWindowSize
+        varValues(n, c) = 10 * var(emg(n:n+varWindowSize, c));
     end
 end
 
@@ -57,29 +66,31 @@ if g==1
         xlabel('t = [ms]')
         ylabel('EMG = [mv]')
         %set(gcf,'color','w');
-        subplot(2,1,1);
+        %subplot(2,1,1);
         title('EMG Signal','FontSize',16);
         plot(emg(:,c));
         %for scatter:
         %Xs = [1:length(emg)];
         %scatter(Xs,emg(:,c));
         
-        hold on;        
+        hold on;         
+        plot(varValues(:,c),'g.');
+
         plot(xlim, [0 0], '-k')
         plot(emg(c,10),0,'r.','MarkerSize',25);
         plot(emg(c,8),0,'g.','MarkerSize',25);
         hold off;
         
-        subplot(2,1,2);
-        title('Signal Variance','FontSize',16);
-        %plot(variances(:,c));
-        %X
-        plot(xValues(:,c),'g.');
-        hold on;
-%         plot(xlim, [thresholdVar(c) thresholdVar(c)], '-g')
-%         plot(xlim, [activVar(c) activVar(c)], '-k')
-%         plot(xlim, [initialVar(c) initialVar(c)], '-r')
-        hold off;
+%         subplot(2,1,2);
+%         title('Signal Variance','FontSize',16);
+%         %plot(variances(:,c));
+%         %X
+%         plot(varValues(:,c),'g.');
+%         hold on;
+% %         plot(xlim, [thresholdVar(c) thresholdVar(c)], '-g')
+% %         plot(xlim, [activVar(c) activVar(c)], '-k')
+% %         plot(xlim, [initialVar(c) initialVar(c)], '-r')
+%         hold off;
     end
 end
 
