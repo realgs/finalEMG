@@ -37,10 +37,17 @@ for c = 1:6
     end
 end
 %2nd phase
-%for c = 1:6
-    [results, emg] = estimator2(emg, 7, windowSize, initialOnsets, initialOnsets - smallWindow, initialOnsets + smallWindow, 1);
-%end
+[results, emg] = estimator2(emg, 7, windowSize, initialOnsets, initialOnsets - smallWindow, initialOnsets + smallWindow, 1);
 
+%Variance temp algorithm
+%%zacznij od momentu znalezionego przez estimator2 - 250 sampli
+varWindowSize = 40;
+varValues = zeros(length(emg),6);
+for c = 1:6
+    for n = 1 : length(emg) - varWindowSize
+        varValues(n, c) = 10 * var(emg(n:n+varWindowSize, c));
+    end
+end
 
 %data visualization
 if g==1
