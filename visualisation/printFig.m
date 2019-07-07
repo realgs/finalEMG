@@ -1,5 +1,5 @@
 function [ ] = printFig( emg )
-%PRINTFIG used for printing figures
+%PRINTFIG use to print figures
 figure('units','normalized','outerposition',[0 0 1 1]);
 title('EMG Signal','FontSize',16);
 %set(gcf,'color','w');
